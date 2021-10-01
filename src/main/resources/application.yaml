@@ -1,0 +1,17 @@
+spring:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create # application 생성 시점에 entity 정보를 지우고 다시 생성 함.
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    generate-ddl: true
+    defer-datasource-initialization: true # 스카마를 먼저 생성하고 data.sql이 실행되기를 원할 때.
+
+logging:
+  level:
+    org.hibernate.SQL: debug
