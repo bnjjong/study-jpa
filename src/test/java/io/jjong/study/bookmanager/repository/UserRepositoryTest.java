@@ -6,14 +6,12 @@ package io.jjong.study.bookmanager.repository;/*
  * @since 2021/09/30
  */
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.springframework.data.domain.Sort.Order.desc;
 
 import io.jjong.study.bookmanager.domain.User;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import javax.transaction.Transactional;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 
 /**
  * create on 2021/09/30. create by IntelliJ IDEA.
@@ -162,8 +161,70 @@ class UserRepositoryTest {
 
     // then
     System.out.println(user);
+
+    // 모두 동일한 쿼리를 수행 한다.
+    System.out.println("findByEmail : " + userRepository.findByEmail("martin@fastcampus.com"));
+    System.out.println("getByEmail : " + userRepository.getByEmail("martin@fastcampus.com"));
+    System.out.println("readByEmail : " + userRepository.readByEmail("martin@fastcampus.com"));
+    System.out.println("queryByEmail : " + userRepository.queryByEmail("martin@fastcampus.com"));
+    System.out.println("searchByEmail : " + userRepository.searchByEmail("martin@fastcampus.com"));
+    System.out.println("streamByEmail : " + userRepository.streamByEmail("martin@fastcampus.com"));
+    System.out.println("findUserByEmail : " + userRepository.findUserByEmail("martin@fastcampus.com"));
+
+    System.out.println("findTop1ByName : " + userRepository.findTop1ByName("martin"));
+    System.out.println("findFirst1ByName : " + userRepository.findFirst1ByName("martin"));
+    // 인식 되지 않은 키워드는 무시 함. -> Last
+    System.out.println("findLast1ByName : " + userRepository.findLast1ByName("martin"));
+
+    System.out.println("findUserByNameAndEmail : " + userRepository.findUserByNameAndEmail("martin", "martin@fastcampus.com"));
+    System.out.println("findUserByNameOrEmail : " + userRepository.findUserByNameOrEmail("martin", "martin2@fastcampus.com"));
+
+    // 특정 날짜 이후 데이터 조회
+    System.out.println("findByCreatedAtAfter : ");
+    userRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1L)).forEach(System.out::println);
+
+    // 특정 아이디 값 보다 높은 데이터 조회
+    System.out.println("findByIdAfter : ");
+    userRepository.findByIdAfter(3L).forEach(System.out::println);
+
+    // 특정 아이디 값 보다 높은 데이터 조회
+    System.out.println("findByCreatedAtGreaterThan : ");
+    userRepository.findByCreatedAtGreaterThan(LocalDateTime.now().minusDays(1L)).forEach(System.out::println);
+
+    // empty test
+//    System.out.println("findByAddressIsNotEmpty : ");
+//    userRepository.findByAddressIsNotEmpty().forEach(System.out::println);
+
+    // test in
+    System.out.println("findByNameIn : ");
+    userRepository.findByNameIn(Lists.newArrayList("martin","dennis")).forEach(System.out::println);
+
+
   }
 
 
+  @Test
+  @DisplayName("do test")
+  public void pagingTest() throws Exception {
+    System.out.println("findTop1ByName : ");
+    userRepository.findTop1ByName("martin").forEach(System.out::println);
+
+    // last 는 무시 됨.
+    System.out.println("findLast1ByName : ");
+    userRepository.findLast1ByName("martin").forEach(System.out::println);
+
+    // 위에 조건을 실제로 구현한 메소드
+    System.out.println("findTop1ByNameOrderByIdDesc : ");
+    userRepository.findTopByNameOrderByIdDesc("martin").forEach(System.out::println);
+
+    // 이메일 정렬 추가 함.
+    System.out.println("findTopByNameOrderByIdDescEmailAsc : ");
+    userRepository.findTopByNameOrderByIdDescEmailAsc("martin").forEach(System.out::println);
+
+    // sort 메서드를 받을 수 있음.
+    System.out.println("findFirstByName : ");
+    userRepository.findFirstByName("martin", Sort.by(Order.desc("id"))  ).forEach(System.out::println);
+
+  }
 
 }
