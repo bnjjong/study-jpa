@@ -9,6 +9,7 @@ package io.jjong.study.bookmanager.repository;/*
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.domain.Sort.Order.desc;
 
+import io.jjong.study.bookmanager.domain.Gender;
 import io.jjong.study.bookmanager.domain.User;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -227,4 +228,40 @@ class UserRepositoryTest {
 
   }
 
+  @Test
+  @DisplayName("do paging test")
+  public void pagingTest2() throws Exception {
+    System.out.println("findByName : ");
+    Page<User> users = userRepository.findByName("martin",
+        PageRequest.of(1, 1, Sort.by(desc("id"))));
+    System.out.println(users);
+    System.out.println(users.getContent());
+  }
+
+  @Test
+  @DisplayName("insert and update test")
+  public void insertAndUpdateTest() throws Exception {
+    User user = new User();
+    user.setName("martin");
+    user.setEmail("martin2@fastcampus.com");
+
+    userRepository.save(user);
+
+    User user2 = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+    user2.setName("marttttinn");
+
+    userRepository.save(user2);
+  }
+
+  @Test
+  @DisplayName("enum test")
+  public void enumTest() throws Exception {
+    User user = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+    user.setGender(Gender.MALE);
+
+    userRepository.save(user);
+    userRepository.findAll().forEach(System.out::println);
+
+    System.out.println(userRepository.findRowRecord().get("gender"));
+  }
 }
